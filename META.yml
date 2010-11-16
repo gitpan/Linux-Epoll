@@ -1,0 +1,30 @@
+---
+abstract: 'O(1) multiplexing for Linux'
+author:
+  - 'Leon Timmermans <leont@cpan.org>'
+build_requires:
+  ExtUtils::CBuilder: 0
+  Module::Build: 0.28
+  Test::More: 0
+configure_requires:
+  Module::Build: 0.28
+generated_by: 'Module::Build version 0.3607'
+license: perl
+meta-spec:
+  url: http://module-build.sourceforge.net/META-spec-v1.4.html
+  version: 1.4
+name: Linux-Epoll
+provides:
+  Linux::Epoll:
+    file: lib/Linux/Epoll.pm
+    version: 0.001
+  Linux::Epoll::Util:
+    file: lib/Linux/Epoll/Util.pm
+    version: 0.001
+requires:
+  Sub::Exporter: 0
+  parent: 0
+  perl: 5.01
+resources:
+  license: http://dev.perl.org/licenses/
+version: 0.001

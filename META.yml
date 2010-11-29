@@ -17,7 +17,7 @@ name: Linux-Epoll
 provides:
   Linux::Epoll:
     file: lib/Linux/Epoll.pm
-    version: 0.001
+    version: 0.002
   Linux::Epoll::Util:
     file: lib/Linux/Epoll/Util.pm
     version: 0.001
@@ -27,4 +27,4 @@ requires:
   perl: 5.01
 resources:
   license: http://dev.perl.org/licenses/
-version: 0.001
+version: 0.002

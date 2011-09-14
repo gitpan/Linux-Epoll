@@ -1,5 +1,10 @@
 Revision history for Linux-Epoll
 
+0.003     2011-09-15 01:23:13 Europe/Amsterdam
+          Converted to Dist::Zilla
+          Handle 5.15.3's new POSIX::SigSet representation
+          Fix strerror_r usage wrt GNU vs POSIX
+
 0.002   2010-11-29
         Fixed event_bits_to_hash
         Added event_bits_to_names

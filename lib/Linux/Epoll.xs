@@ -1,3 +1,10 @@
+#ifndef _GNU_SOURCE
+#	define _GNU_SOURCE
+#endif
+#define GNU_STRERROR_R
+
+#include <string.h>
+
 #include <sys/epoll.h>
 
 #define PERL_NO_GET_CONTEXT
@@ -8,14 +15,14 @@
 #define get_fd(self) PerlIO_fileno(IoIFP(sv_2io(SvRV(self))));
 
 static void get_sys_error(char* buffer, size_t buffer_size) {
-#ifdef _GNU_SOURCE
+#if _POSIX_VERSION >= 200112L
 	const char* message = strerror_r(errno, buffer, buffer_size);
-	if (message != buffer) {
-		memcpy(buffer, message, buffer_size -1);
-		buffer[buffer_size] = '\0';
-	}
+	if (message != buffer)
+		memcpy(buffer, message, buffer_size);
 #else
-	strerror_r(errno, buffer, buffer_size);
+	const char* message = strerror(errno);
+	strncpy(buffer, message, buffer_size - 1);
+	buffer[buffer_size - 1] = '\0';
 #endif
 }
 
@@ -26,10 +33,19 @@ static void S_die_sys(pTHX_ const char* format) {
 }
 #define die_sys(format) S_die_sys(aTHX_ format)
 
-const sigset_t* sv_to_sigset(pTHX_ SV* sigmask) {
-	const char* string = SvPV_nolen(sigmask);
-	return (const sigset_t*) string;
+sigset_t* S_sv_to_sigset(pTHX_ SV* sigmask, const char* name) {
+	if (!SvOK(sigmask))
+		return NULL;
+	if (!SvROK(sigmask) || !sv_derived_from(sigmask, "POSIX::SigSet"))
+		Perl_croak(aTHX_ "%s is not of type POSIX::SigSet");
+#if PERL_VERSION > 15 || PERL_VERSION == 15 && PERL_SUBVERSION > 2
+	return (sigset_t *) SvPV_nolen(SvRV(sigmask));
+#else
+	IV tmp = SvIV((SV*)SvRV(sigmask));
+	return INT2PTR(sigset_t*, tmp);
+#endif
 }
+#define sv_to_sigset(sigmask, name) S_sv_to_sigset(aTHX_ sigmask, name)
 
 typedef struct { const char* key; size_t keylen; uint32_t value; } entry;
 typedef entry map[];
@@ -279,7 +295,7 @@ wait(self, maxevents = 1, timeout = undef, sigset = undef)
 			Perl_croak(aTHX_ "Can't wait for a non-positive number of events (maxevents = %d)", maxevents);
 		efd = get_fd(self);
 		real_timeout = SvOK(timeout) ? SvNV(timeout) * 1000 : -1;
-		real_sigset = SvOK(sigset) ? sv_to_sigset(aTHX_ sigset) : NULL;
+		real_sigset = SvOK(sigset) ? sv_to_sigset(aTHX_ sigset, "epoll_pwait") : NULL;
 
 		events = alloca(sizeof(struct epoll_event) * maxevents);
 		do {

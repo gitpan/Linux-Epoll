@@ -1,5 +1,5 @@
 This file contains message digests of all files listed in MANIFEST,
-signed via the Module::Signature module, version 0.63.
+signed via the Module::Signature module, version 0.68.
 
 To verify the content in this distribution, first make sure you have
 Module::Signature installed, then type:
@@ -14,24 +14,27 @@ not run its Makefile.PL or Build.PL.
 -----BEGIN PGP SIGNED MESSAGE-----
 Hash: SHA1
 
-SHA1 6191fb195b16143840e8429b698f213076924932 Build.PL
-SHA1 ccfc78cbfae54b67d2b943d968c153d4af05de0c Changes
-SHA1 9e627682091372eabbb50d3af3404656d87eb080 LICENSE
-SHA1 0aea48fbb09774f8b6702ba2c2c1d54a14ecf21d MANIFEST
-SHA1 1cdf3de4193495f54df85ab5f3ba301a0b51201b META.yml
-SHA1 eb7f74d943df9b232fce4c9c5e6070070c9eb363 Makefile.PL
-SHA1 f52aab0aeb1e6c3c3a95e0d28e383c021ca8f06d README
-SHA1 687f939aa2c947636a87722b0be4b10320952280 lib/Linux/Epoll.pm
-SHA1 732d52b72866c6ce91fde4af25308909999d079c lib/Linux/Epoll.xs
-SHA1 51faf3ed7f436f01fcee31fd550e2f961357b891 lib/Linux/Epoll/Util.pm
-SHA1 b2950d7c51f2922451fafd9f3f12635843feb98f t/00-load.t
+SHA1 0b23780929bee893673e54ec3d2990741f2e4001 Build.PL
+SHA1 57329ee892ef1933806301e3e5370df44cd94a34 Changes
+SHA1 47f38789d1c9b7d4db55a1d0da3e1cc845e18164 INSTALL
+SHA1 255e4d333d5d1b2d2d1371fdd129c14e25eff531 LICENSE
+SHA1 db58469791de1cd9081d227d25b73080aee06fd2 MANIFEST
+SHA1 aba9ce992be3dfbd2ecfe8bc9e4297338e6016cb META.json
+SHA1 3a6a5385c504f935ab3ec6f0816e89b8cfe90b4e META.yml
+SHA1 95e26790168080b7949a06583782641a50f137b0 README
+SHA1 2a3792f2f702ec3bbc51878f3017c3e68205b8cc dist.ini
+SHA1 78fcea4f46149e44851848508e9fb584c0c0449f lib/Linux/Epoll.pm
+SHA1 4b6b640f2851ff6df4251f9fbf3813b33fb3fab8 lib/Linux/Epoll.xs
+SHA1 400144e38b81a6a98d319a2bc6d27337eebc8dc8 lib/Linux/Epoll/Util.pm
+SHA1 14863e63ebceb712fe78ec64e52543a2e7909716 t/00-compile.t
 SHA1 bf9cc93a84430bb0488da359ba57ee6750e2ff63 t/10-basics.t
-SHA1 0b1c5a2d59be6bfa7d60c64cd964fea6a0331705 t/pod-coverage.t
-SHA1 640935336dc1123c0069bcf5432bcaedc2cf22d3 t/pod.t
+SHA1 6ea81e3865946a14536f97ccc65fee4b218c8148 t/release-kwalitee.t
+SHA1 9433c240fe590bc404ab68ff63984df763e347ed t/release-pod-coverage.t
+SHA1 b30cbdfaf935017c4568c0c91b242438cb87786e t/release-pod-syntax.t
 -----BEGIN PGP SIGNATURE-----
-Version: GnuPG v1.4.10 (GNU/Linux)
+Version: GnuPG v1.4.11 (GNU/Linux)
 
-iEYEARECAAYFAkzzwf4ACgkQTd+EWiaICwoqSgCgltBYkq256+r5NbqA7m/ESUaI
-4YsAn0ngSrp2FvHXNup/qJu7SyTol3Ol
-=xnfM
+iEYEARECAAYFAk5xN2UACgkQTd+EWiaICwqbwwCfWaoe5AVaX7p4GbAyxds+Tkj4
+V6QAn1956yGt8pAUnsU8rNKNv0bPxvyR
+=6Ki5
 -----END PGP SIGNATURE-----

@@ -1,4 +1,7 @@
 package Linux::Epoll;
+BEGIN {
+  $Linux::Epoll::VERSION = '0.003';
+}
 
 use 5.010;
 use strict;
@@ -6,13 +9,13 @@ use warnings FATAL => 'all';
 
 use parent 'IO::Handle';
 
-our $VERSION = '0.002';
+XSLoader::load(__PACKAGE__, __PACKAGE__->VERSION);
 
-XSLoader::load(__PACKAGE__, $VERSION);
+1;
 
-1;    # End of Linux::Epoll
 
-__END__
+
+=pod
 
 =head1 NAME
 
@@ -20,7 +23,7 @@ Linux::Epoll - O(1) multiplexing for Linux
 
 =head1 VERSION
 
-Version 0.002
+version 0.003
 
 =head1 SYNOPSIS
 
@@ -108,50 +111,19 @@ Wait for up to C<$number> events, where C<$number> must be greater than zero. C<
 
 =head1 AUTHOR
 
-Leon Timmermans, C<< <leont at cpan.org> >>
+Leon Timmermans <leont@cpan.org>
 
-=head1 BUGS
+=head1 COPYRIGHT AND LICENSE
 
-Please report any bugs or feature requests to C<bug-linux-epoll at rt.cpan.org>, or through
-the web interface at L<http://rt.cpan.org/NoAuth/ReportBug.html?Queue=Linux-Epoll>.  I will be notified, and then you'll
-automatically be notified of progress on your bug as I make changes.
+This software is copyright (c) 2010 by Leon Timmermans.
 
-=head1 SUPPORT
-
-You can find documentation for this module with the perldoc command.
-
-    perldoc Linux::Epoll
-
-You can also look for information at:
-
-=over 4
-
-=item * RT: CPAN's request tracker
-
-L<http://rt.cpan.org/NoAuth/Bugs.html?Dist=Linux-Epoll>
-
-=item * AnnoCPAN: Annotated CPAN documentation
-
-L<http://annocpan.org/dist/Linux-Epoll>
-
-=item * CPAN Ratings
-
-L<http://cpanratings.perl.org/d/Linux-Epoll>
-
-=item * Search CPAN
-
-L<http://search.cpan.org/dist/Linux-Epoll/>
-
-=back
-
-=head1 LICENSE AND COPYRIGHT
-
-Copyright 2010 Leon Timmermans.
-
-This program is free software; you can redistribute it and/or modify it
-under the terms of either: the GNU General Public License as published
-by the Free Software Foundation; or the Artistic License.
-
-See http://dev.perl.org/licenses/ for more information.
+This is free software; you can redistribute it and/or modify it under
+the same terms as the Perl 5 programming language system itself.
 
 =cut
+
+
+__END__
+
+#ABSTRACT: O(1) multiplexing for Linux
+

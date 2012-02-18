@@ -1,6 +1,6 @@
 package Linux::Epoll::Util;
-BEGIN {
-  $Linux::Epoll::Util::VERSION = '0.003';
+{
+  $Linux::Epoll::Util::VERSION = '0.004';
 }
 
 use strict;
@@ -12,6 +12,8 @@ use Sub::Exporter -setup => { exports => [qw/event_names_to_bits event_bits_to_n
 
 1;    # End of Linux::Epoll::Util
 
+#ABSTRACT: Utility functions for Linux::Epoll
+
 
 
 =pod
@@ -22,7 +24,7 @@ Linux::Epoll::Util - Utility functions for Linux::Epoll
 
 =head1 VERSION
 
-version 0.003
+version 0.004
 
 =head1 DESCRIPTION
 
@@ -57,6 +59,4 @@ the same terms as the Perl 5 programming language system itself.
 
 
 __END__
-
-#ABSTRACT: Utility functions for Linux::Epoll
 

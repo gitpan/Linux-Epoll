@@ -1,5 +1,8 @@
 Revision history for Linux-Epoll
 
+0.004     2012-02-18 21:52:56 Europe/Amsterdam
+          Fixed compilation issue on multiplicity perls
+
 0.003     2011-09-15 01:23:13 Europe/Amsterdam
           Converted to Dist::Zilla
           Handle 5.15.3's new POSIX::SigSet representation

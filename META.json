@@ -3,8 +3,8 @@
    "author" : [
       "Leon Timmermans <leont@cpan.org>"
    ],
-   "dynamic_config" : 0,
-   "generated_by" : "Dist::Zilla version 4.200008, CPAN::Meta::Converter version 2.110440",
+   "dynamic_config" : "1",
+   "generated_by" : "Dist::Zilla version 4.300006, CPAN::Meta::Converter version 2.113640",
    "license" : [
       "perl_5"
    ],
@@ -16,7 +16,6 @@
    "prereqs" : {
       "build" : {
          "requires" : {
-            "ExtUtils::CBuilder" : 0,
             "Module::Build" : "0.3601"
          }
       },
@@ -58,6 +57,6 @@
          "web" : "http://github.com/Leont/linux-epoll"
       }
    },
-   "version" : "0.003"
+   "version" : "0.004"
 }
 

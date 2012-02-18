@@ -16,9 +16,13 @@
 
 static void get_sys_error(char* buffer, size_t buffer_size) {
 #if _POSIX_VERSION >= 200112L
+#	ifdef GNU_STRERROR_R
 	const char* message = strerror_r(errno, buffer, buffer_size);
 	if (message != buffer)
 		memcpy(buffer, message, buffer_size);
+#	else
+	strerror_r(errno, buffer, buffer_size);
+#	endif
 #else
 	const char* message = strerror(errno);
 	strncpy(buffer, message, buffer_size - 1);
@@ -295,7 +299,7 @@ wait(self, maxevents = 1, timeout = undef, sigset = undef)
 			Perl_croak(aTHX_ "Can't wait for a non-positive number of events (maxevents = %d)", maxevents);
 		efd = get_fd(self);
 		real_timeout = SvOK(timeout) ? SvNV(timeout) * 1000 : -1;
-		real_sigset = SvOK(sigset) ? sv_to_sigset(aTHX_ sigset, "epoll_pwait") : NULL;
+		real_sigset = SvOK(sigset) ? sv_to_sigset(sigset, "epoll_pwait") : NULL;
 
 		events = alloca(sizeof(struct epoll_event) * maxevents);
 		do {

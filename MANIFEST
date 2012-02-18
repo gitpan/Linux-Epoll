@@ -6,7 +6,6 @@ MANIFEST
 META.json
 META.yml
 README
-SIGNATURE
 dist.ini
 lib/Linux/Epoll.pm
 lib/Linux/Epoll.xs

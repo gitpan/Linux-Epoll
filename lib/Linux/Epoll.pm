@@ -1,6 +1,6 @@
 package Linux::Epoll;
-BEGIN {
-  $Linux::Epoll::VERSION = '0.003';
+{
+  $Linux::Epoll::VERSION = '0.004';
 }
 
 use 5.010;
@@ -13,6 +13,8 @@ XSLoader::load(__PACKAGE__, __PACKAGE__->VERSION);
 
 1;
 
+#ABSTRACT: O(1) multiplexing for Linux
+
 
 
 =pod
@@ -23,7 +25,7 @@ Linux::Epoll - O(1) multiplexing for Linux
 
 =head1 VERSION
 
-version 0.003
+version 0.004
 
 =head1 SYNOPSIS
 
@@ -124,6 +126,4 @@ the same terms as the Perl 5 programming language system itself.
 
 
 __END__
-
-#ABSTRACT: O(1) multiplexing for Linux
 

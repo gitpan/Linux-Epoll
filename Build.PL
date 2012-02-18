@@ -11,7 +11,6 @@ if ($^O ne 'linux') {
 my $builder = Module::Build->new(
 	module_name => 'Linux::Epoll',
 	  'build_requires' => {
-    'ExtUtils::CBuilder' => '0',
     'File::Find' => '0',
     'File::Temp' => '0',
     'Module::Build' => '0.3601',

@@ -9,7 +9,6 @@ README
 dist.ini
 lib/Linux/Epoll.pm
 lib/Linux/Epoll.xs
-lib/Linux/Epoll/Util.pm
 t/00-compile.t
 t/10-basics.t
 t/release-kwalitee.t

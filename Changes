@@ -1,5 +1,9 @@
 Revision history for Linux-Epoll
 
+0.005     2012-06-29 17:04:09 Europe/Amsterdam
+          Don't expose bitmasks anymore
+          Don't retry on EINTR
+
 0.004     2012-02-18 21:52:56 Europe/Amsterdam
           Fixed compilation issue on multiplicity perls
 

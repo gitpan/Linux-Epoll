@@ -24,7 +24,6 @@ my $builder = Module::Build->new(
   },
   'requires' => {
     'IO::Handle' => '0',
-    'Sub::Exporter' => '0',
     'parent' => '0',
     'perl' => '5.010',
     'strict' => '0',

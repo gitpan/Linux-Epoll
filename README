@@ -1,7 +1,7 @@
 
 
 This archive contains the distribution Linux-Epoll,
-version 0.005:
+version 0.006:
 
   O(1) multiplexing for Linux
 

@@ -3,6 +3,7 @@
 #endif
 #define GNU_STRERROR_R
 
+#include <math.h>
 #include <string.h>
 
 #include <sys/epoll.h>
@@ -239,7 +240,7 @@ add(self, fh, events, callback)
 		real_callback = extract_cv(callback);
 		event.data.ptr = real_callback;
 		if (epoll_ctl(efd, EPOLL_CTL_ADD, ofd, &event) == -1) {
-			if (GIMME_V != G_VOID && errno == EEXIST)
+			if (GIMME_V != G_VOID && (errno == EEXIST || errno == EPERM))
 				XSRETURN_EMPTY;
 			else
 				die_sys("Couldn't add filehandle from epoll set: %s");
@@ -311,13 +312,13 @@ wait(self, maxevents = 1, timeout = undef, sigset = undef)
 		if (maxevents <= 0)
 			Perl_croak(aTHX_ "Can't wait for a non-positive number of events (maxevents = %d)", maxevents);
 		efd = get_fd(self);
-		real_timeout = SvOK(timeout) ? SvNV(timeout) * 1000 : -1;
+		real_timeout = SvOK(timeout) ? (int)ceil(SvNV(timeout) * 1000) : -1;
 		real_sigset = SvOK(sigset) ? sv_to_sigset(sigset, "epoll_pwait") : NULL;
 
 		events = alloca(sizeof(struct epoll_event) * maxevents);
 		RETVAL = epoll_pwait(efd, events, maxevents, real_timeout, real_sigset);
 		if (RETVAL == -1) {
-			if (GIMME_V == G_VOID || errno != EINTR)
+			if (errno != EINTR)
 				die_sys("Couldn't wait on epollfd: %s");
 			XSRETURN_EMPTY;
 		}

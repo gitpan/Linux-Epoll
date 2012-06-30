@@ -1,6 +1,6 @@
 package Linux::Epoll;
 {
-  $Linux::Epoll::VERSION = '0.005';
+  $Linux::Epoll::VERSION = '0.006';
 }
 
 use 5.010;
@@ -25,7 +25,7 @@ Linux::Epoll - O(1) multiplexing for Linux
 
 =head1 VERSION
 
-version 0.005
+version 0.006
 
 =head1 SYNOPSIS
 
@@ -36,7 +36,7 @@ version 0.005
      my $events = shift;
      do_something($fh) if $events->{in};
  });
- 1 while $epoll->wait;
+ $epoll->wait while 1;
 
 =head1 DESCRIPTION
 
@@ -88,7 +88,7 @@ Create a new epoll instance.
 
 =head2 add($fh, $events, $callback)
 
-Register the filehandle with the epoll instance and associate events C<$events> and callback C<$callback> with it. C<$events> may be either a string (e.g. C<'in'>) or an arrayref (e.g. C<[qw/in out hup/]>). If a filehandle already exists in the set and C<add> is called in non-void context, it returns undef and sets C<$!> to C<EEXIST>. On all other error conditions an exception is thrown. The callback gets a single argument, a hashref whose keys are the triggered events.
+Register the filehandle with the epoll instance and associate events C<$events> and callback C<$callback> with it. C<$events> may be either a string (e.g. C<'in'>) or an arrayref (e.g. C<[qw/in out hup/]>). If a filehandle already exists in the set and C<add> is called in non-void context, it returns undef and sets C<$!> to C<EEXIST>; if the file can't be waited upon it sets C<$!> to C<EPERM> instead. On all other error conditions an exception is thrown. The callback gets a single argument, a hashref whose keys are the triggered events.
 
 =head2 modify($fh, $events, $callback)
 
@@ -100,7 +100,7 @@ Remove a filehandle from the epoll instance. If a filehandle doesn't exist in th
 
 =head2 wait($number = 1, $timeout = undef, $sigmask = undef)
 
-Wait for up to C<$number> events, where C<$number> must be greater than zero. C<$timeout> is the maximal time C<wait> will wait for events in fractional seconds. If it is undefined it may wait indefinitely. C<$sigmask> is the signal mask during the call. If it is not defined the signal mask will be untouched. If interrupted by a signal and C<wait> is called in non-void context, it returns undef and sets C<$!> to C<EINTR>. On all other error conditions an exception is thrown.
+Wait for up to C<$number> events, where C<$number> must be greater than zero. C<$timeout> is the maximal time C<wait> will wait for events in fractional seconds. If it is undefined it may wait indefinitely. C<$sigmask> is the signal mask during the call. If it is not defined the signal mask will be untouched. If interrupted by a signal it returns undef/an empty list and sets C<$!> to C<EINTR>. On all other error conditions an exception is thrown.
 
 =head1 SEE ALSO
 

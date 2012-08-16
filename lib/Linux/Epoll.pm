@@ -1,6 +1,6 @@
 package Linux::Epoll;
 {
-  $Linux::Epoll::VERSION = '0.006';
+  $Linux::Epoll::VERSION = '0.007';
 }
 
 use 5.010;
@@ -25,7 +25,7 @@ Linux::Epoll - O(1) multiplexing for Linux
 
 =head1 VERSION
 
-version 0.006
+version 0.007
 
 =head1 SYNOPSIS
 
@@ -82,9 +82,9 @@ Sets the one-shot behavior for the associated file descriptor. This means that a
 
 =head1 METHODS
 
-=head2 new()
+=head2 new($options = undef)
 
-Create a new epoll instance.
+Create a new epoll instance. It takes an optional hashref as argument.
 
 =head2 add($fh, $events, $callback)
 

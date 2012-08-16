@@ -12,8 +12,9 @@
 #include "EXTERN.h"
 #include "perl.h"
 #include "XSUB.h"
+#include "ppport.h"
 
-#define get_fd(self) PerlIO_fileno(IoIFP(sv_2io(SvRV(self))));
+#define get_fd(self) PerlIO_fileno(IoIFP(sv_2io(SvRV(self))))
 
 static void get_sys_error(char* buffer, size_t buffer_size) {
 #if _POSIX_VERSION >= 200112L
@@ -118,40 +119,34 @@ static CV* S_extract_cv(pTHX_ SV* sv) {
 }
 #define extract_cv(sv) S_extract_cv(aTHX_ sv)
 
-static MAGIC* S_mg_find_ext(pTHX_ SV* sv, U16 private) {
-	PERL_UNUSED_CONTEXT;
-	if (sv && SvMAGICAL(sv)) {
-		MAGIC* mg;
-		for (mg = SvMAGIC(sv); mg; mg = mg->mg_moremagic)
-			if (mg->mg_type == PERL_MAGIC_ext && mg->mg_private == private)
-				return mg;
-	}
-	return NULL;
-}
-#define mg_find_ext(sv, private) S_mg_find_ext(aTHX_ sv, private)
-
-static const U16 magic_number = 0x4c45;
-
 struct data {
 	AV* backrefs;
 	int index;
 };
 
-int weak_set(pTHX_ SV* sv, MAGIC* magic) {
+static int weak_set(pTHX_ SV* sv, MAGIC* magic) {
 	struct data* data = (struct data*)magic->mg_ptr;
 	av_delete(data->backrefs, data->index, G_DISCARD);
 	return 0;
 }
 
-MGVTBL weak_magic = { NULL, weak_set, NULL, NULL, NULL };
+static int weak_free(pTHX_ SV* sv, MAGIC* magic);
+
+MGVTBL epoll_magic = { NULL };
+MGVTBL weak_magic = { NULL, weak_set, NULL, NULL, weak_free };
+
+static int weak_free(pTHX_ SV* sv, MAGIC* magic) {
+	struct data* data = (struct data*)magic->mg_ptr;
+	mg_findext(sv, PERL_MAGIC_ext, &weak_magic)->mg_virtual = NULL; /* Cover perl bugs under the carpet */
+}
+
+#define get_backrefs(epoll) (AV*)mg_findext(SvRV(epoll), PERL_MAGIC_ext, &epoll_magic)->mg_obj
 
 static void S_set_backref(pTHX_ SV* epoll, SV* fh, CV* callback) {
-	MAGIC* mg = mg_find_ext(SvRV(epoll), magic_number);
-	AV* backrefs = (AV*)mg->mg_obj;
+	AV* backrefs = get_backrefs(epoll);
 	int fd = get_fd(fh);
 	struct data backref = { backrefs, fd };
-	SV* ref = newSVsv(fh);
-	sv_rvweaken(ref);
+	SV* ref = sv_rvweaken(newSVsv(fh));
 
 	av_store(backrefs, fd, ref);
 	sv_magicext(ref, (SV*)callback, PERL_MAGIC_ext, &weak_magic, (const char*)&backref, sizeof backref);
@@ -159,9 +154,7 @@ static void S_set_backref(pTHX_ SV* epoll, SV* fh, CV* callback) {
 #define set_backref(epoll, fh, cb) S_set_backref(aTHX_ epoll, fh, cb)
 
 static void S_del_backref(pTHX_ SV* epoll, SV* fh) {
-	MAGIC* mg = mg_find_ext(SvRV(epoll), magic_number);
-	I32 fd = get_fd(fh);
-	av_delete((AV*)mg->mg_obj, fd, G_DISCARD);
+	av_delete(get_backrefs(epoll), get_fd(fh), G_DISCARD);
 }
 #define del_backref(epoll, fh) S_del_backref(aTHX_ epoll, fh)
 
@@ -169,7 +162,7 @@ static void S_del_backref(pTHX_ SV* epoll, SV* fh) {
 
 static SV* S_io_fdopen(pTHX_ int fd) {
 	PerlIO* pio = PerlIO_fdopen(fd, "r");
-	GV* gv = newGVgen("Symbol");
+	GV* gv = newGVgen("Linux::Epoll");
 	SV* ret = newRV_noinc((SV*)gv);
 	IO* io = GvIOn(gv);
 	IoTYPE(io) = '<';
@@ -178,14 +171,6 @@ static SV* S_io_fdopen(pTHX_ int fd) {
 	return ret;
 }
 #define io_fdopen(fd) S_io_fdopen(aTHX_ fd)
-
-static int S_interrupted(pTHX_ int retval) {
-	int ret = retval == -1 && errno == EINTR;
-	if (ret)
-		PERL_ASYNC_CHECK();
-	return ret;
-}
-#define interrupted(retval) S_interrupted(aTHX_ retval)
 
 static SV* S_event_bits_to_hash(pTHX_ UV bits) {
 	int shift;
@@ -203,10 +188,13 @@ static SV* S_event_bits_to_hash(pTHX_ UV bits) {
 MODULE = Linux::Epoll				PACKAGE = Linux::Epoll
 
 SV*
-new(const char* package)
+new(package, args = undef)
+	const char* package;
+	SV* args;
 	PREINIT:
 		int fd;
 		MAGIC* mg;
+		HV* callbacks;
 	CODE: 
 #ifdef EPOLL_CLOEXEC
 		fd = epoll_create1(EPOLL_CLOEXEC);
@@ -216,8 +204,8 @@ new(const char* package)
 		if (fd < 0) 
 			die_sys("Couldn't open epollfd: %s");
 		RETVAL = io_fdopen(fd);
-		mg = sv_magicext(SvRV(RETVAL), sv_2mortal((SV*)newAV()), PERL_MAGIC_ext, NULL, NULL, 0);
-		mg->mg_private = magic_number;
+		callbacks = SvROK(args) && SvTYPE(SvRV(args)) == SVt_PVHV ? newHVhv((HV*)SvRV(args)) : NULL;
+		mg = sv_magicext(SvRV(RETVAL), sv_2mortal((SV*)newAV()), PERL_MAGIC_ext, &epoll_magic, (char*)callbacks, HEf_SVKEY);
 		sv_bless(RETVAL, gv_stashpv(package, TRUE));
 	OUTPUT:
 		RETVAL

@@ -11,8 +11,9 @@ if ($^O ne 'linux') {
 my $builder = Module::Build->new(
 	module_name => 'Linux::Epoll',
 	  'build_requires' => {
-    'File::Find' => '0',
-    'File::Temp' => '0',
+    'File::Spec' => '0',
+    'IO::Handle' => '0',
+    'IPC::Open3' => '0',
     'Module::Build' => '0.3601',
     'Scalar::Util' => '0',
     'Socket' => '0',

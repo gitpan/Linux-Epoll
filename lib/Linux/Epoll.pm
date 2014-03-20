@@ -1,8 +1,5 @@
 package Linux::Epoll;
-{
-  $Linux::Epoll::VERSION = '0.007';
-}
-
+$Linux::Epoll::VERSION = '0.008';
 use 5.010;
 use strict;
 use warnings FATAL => 'all';
@@ -15,9 +12,11 @@ XSLoader::load(__PACKAGE__, __PACKAGE__->VERSION);
 
 #ABSTRACT: O(1) multiplexing for Linux
 
-
 __END__
+
 =pod
+
+=encoding UTF-8
 
 =head1 NAME
 
@@ -25,7 +24,7 @@ Linux::Epoll - O(1) multiplexing for Linux
 
 =head1 VERSION
 
-version 0.007
+version 0.008
 
 =head1 SYNOPSIS
 
@@ -126,4 +125,3 @@ This is free software; you can redistribute it and/or modify it under
 the same terms as the Perl 5 programming language system itself.
 
 =cut
-

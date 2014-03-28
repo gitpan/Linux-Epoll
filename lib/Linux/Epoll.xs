@@ -12,6 +12,8 @@
 #include "EXTERN.h"
 #include "perl.h"
 #include "XSUB.h"
+#define NEED_mg_findext
+#define NEED_sv_unmagicext
 #include "ppport.h"
 
 #define get_fd(self) PerlIO_fileno(IoIFP(sv_2io(SvRV(self))))
@@ -40,6 +42,7 @@ static void S_die_sys(pTHX_ const char* format) {
 #define die_sys(format) S_die_sys(aTHX_ format)
 
 sigset_t* S_sv_to_sigset(pTHX_ SV* sigmask, const char* name) {
+	IV tmp;
 	if (!SvOK(sigmask))
 		return NULL;
 	if (!SvROK(sigmask) || !sv_derived_from(sigmask, "POSIX::SigSet"))
@@ -47,7 +50,7 @@ sigset_t* S_sv_to_sigset(pTHX_ SV* sigmask, const char* name) {
 #if PERL_VERSION > 15 || PERL_VERSION == 15 && PERL_SUBVERSION > 2
 	return (sigset_t *) SvPV_nolen(SvRV(sigmask));
 #else
-	IV tmp = SvIV((SV*)SvRV(sigmask));
+	tmp = SvIV((SV*)SvRV(sigmask));
 	return INT2PTR(sigset_t*, tmp);
 #endif
 }

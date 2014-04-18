@@ -41,7 +41,7 @@ static void S_die_sys(pTHX_ const char* format) {
 }
 #define die_sys(format) S_die_sys(aTHX_ format)
 
-sigset_t* S_sv_to_sigset(pTHX_ SV* sigmask, const char* name) {
+static sigset_t* S_sv_to_sigset(pTHX_ SV* sigmask, const char* name) {
 	IV tmp;
 	if (!SvOK(sigmask))
 		return NULL;
@@ -179,9 +179,12 @@ static SV* S_event_bits_to_hash(pTHX_ UV bits) {
 	int shift;
 	HV* ret = newHV();
 	for (shift = 0; shift < 32; ++shift) {
-		if (bits & (1 << shift)) {
-			entry* tmp = get_event_name(1 << shift);
-			hv_store(ret, tmp->key, tmp->keylen, newSViv(1), 0);
+		int bit_value = 1 << shift;
+		if (bits & bit_value) {
+			entry* tmp = get_event_name(bit_value);
+			hv_store(ret, tmp->key, tmp->keylen, &PL_sv_yes, 0);
+			if (bits == bit_value)
+				break;
 		}
 	}
 	return newRV_noinc((SV*)ret);
@@ -191,13 +194,11 @@ static SV* S_event_bits_to_hash(pTHX_ UV bits) {
 MODULE = Linux::Epoll				PACKAGE = Linux::Epoll
 
 SV*
-new(package, args = undef)
+new(package)
 	const char* package;
-	SV* args;
 	PREINIT:
 		int fd;
 		MAGIC* mg;
-		HV* callbacks;
 	CODE: 
 #ifdef EPOLL_CLOEXEC
 		fd = epoll_create1(EPOLL_CLOEXEC);
@@ -207,8 +208,7 @@ new(package, args = undef)
 		if (fd < 0) 
 			die_sys("Couldn't open epollfd: %s");
 		RETVAL = io_fdopen(fd);
-		callbacks = SvROK(args) && SvTYPE(SvRV(args)) == SVt_PVHV ? newHVhv((HV*)SvRV(args)) : NULL;
-		mg = sv_magicext(SvRV(RETVAL), sv_2mortal((SV*)newAV()), PERL_MAGIC_ext, &epoll_magic, (char*)callbacks, HEf_SVKEY);
+		mg = sv_magicext(SvRV(RETVAL), sv_2mortal((SV*)newAV()), PERL_MAGIC_ext, &epoll_magic, NULL, 0);
 		sv_bless(RETVAL, gv_stashpv(package, TRUE));
 	OUTPUT:
 		RETVAL

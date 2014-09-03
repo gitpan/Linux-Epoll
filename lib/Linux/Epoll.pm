@@ -1,5 +1,5 @@
 package Linux::Epoll;
-$Linux::Epoll::VERSION = '0.010';
+$Linux::Epoll::VERSION = '0.011';
 use 5.010;
 use strict;
 use warnings FATAL => 'all';
@@ -24,7 +24,7 @@ Linux::Epoll - O(1) multiplexing for Linux
 
 =head1 VERSION
 
-version 0.010
+version 0.011
 
 =head1 SYNOPSIS
 
@@ -100,6 +100,10 @@ Remove a filehandle from the epoll instance. If a filehandle doesn't exist in th
 =head2 wait($number = 1, $timeout = undef, $sigmask = undef)
 
 Wait for up to C<$number> events, where C<$number> must be greater than zero. C<$timeout> is the maximal time C<wait> will wait for events in fractional seconds. If it is undefined it may wait indefinitely. C<$sigmask> is the signal mask during the call. If it is not defined the signal mask will be untouched. If interrupted by a signal it returns undef/an empty list and sets C<$!> to C<EINTR>. On all other error conditions an exception is thrown.
+
+=head1 REQUIREMENTS
+
+This module requires at least Perl 5.10 and Linux 2.6.19 to function correctly.
 
 =head1 SEE ALSO
 

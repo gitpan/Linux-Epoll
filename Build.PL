@@ -14,14 +14,14 @@ my $builder = Module::Build->new(
     'File::Spec' => '0',
     'IO::Handle' => '0',
     'IPC::Open3' => '0',
-    'Module::Build' => '0.3601',
+    'Module::Build' => '0.28',
     'Scalar::Util' => '0',
     'Socket' => '0',
     'Test::More' => '0',
     'Time::HiRes' => '0'
   },
   'configure_requires' => {
-    'Module::Build' => '0.3601'
+    'Module::Build' => '0.28'
   },
   'requires' => {
     'IO::Handle' => '0',
